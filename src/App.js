@@ -3,9 +3,31 @@ import RowMovie from "./components/RowMovie";
 import requests from "./requests";
 import Banner from "./components/Banner";
 import Navbar from "./components/Navbar";
+import { login, logout } from "./features/userSlice";
+import { useEffect } from "react";
+import { auth } from "./firebase";
+import { useDispatch } from "react-redux";
 
 // 4646722b36dfe28ad45d95f37ac77aeb
 function App() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    return auth().onAuthStateChanged((authUser) => {
+      if (authUser) {
+        // console.log(authUser)
+        dispatch(
+          login({
+            uid: authUser.uid,
+            photo: authUser.photoURL,
+            email: authUser.email,
+            displayName: authUser.displayName,
+          })
+        );
+      } else {
+        dispatch(logout());
+      }
+    });
+  }, [dispatch]);
   return (
     <div className="app">
       {/* Navbar */}
